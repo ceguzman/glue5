@@ -1,0 +1,16 @@
+version: '3.8'
+
+services:
+  glue:
+    container_name: ${PROJECT_NAME}_container
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: ${PROJECT_NAME}:glue-${GLUE_VERSION}
+    environment:
+      - AWS_REGION=${AWS_REGION}
+      - GLUE_VERSION=${GLUE_VERSION}
+      - PYTHONPATH=${WORKDIR}
+    volumes:
+      - .:${WORKDIR}
+    tty: true
