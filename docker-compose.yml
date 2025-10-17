@@ -1,5 +1,3 @@
-version: '3.8'
-
 services:
   glue:
     container_name: ${PROJECT_NAME}_container
@@ -12,5 +10,7 @@ services:
       - GLUE_VERSION=${GLUE_VERSION}
       - PYTHONPATH=${WORKDIR}
     volumes:
-      - .:${WORKDIR}
+      # Monta tu proyecto ETL dentro del contenedor
+      - ${ETL_PATH}:${WORKDIR}
+    working_dir: ${WORKDIR}
     tty: true
