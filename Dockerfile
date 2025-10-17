@@ -8,4 +8,4 @@ RUN python3 -m ensurepip && \
     python3 -m pip install --upgrade pip
 
 # Comando por defecto
-CMD ["/bin/bash"]
+CMD ["tail", "-f", "/dev/null"]
