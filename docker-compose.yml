@@ -1,5 +1,3 @@
-version: '3.7'
-
 services:
   glue:
     container_name: ${PROJECT_NAME}_container
@@ -11,36 +9,14 @@ services:
       - AWS_REGION=${AWS_REGION}
       - GLUE_VERSION=${GLUE_VERSION}
       - PYTHONPATH=${WORKDIR}
+      - AWS_ACCESS_KEY_ID=${AWS_ACCESS_KEY_ID}
+      - AWS_SECRET_ACCESS_KEY=${AWS_SECRET_ACCESS_KEY}
+      - AWS_SESSION_TOKEN=${AWS_SESSION_TOKEN}
     volumes:
-      - ${ETL_PATH}:${WORKDIR}
+      - ${ETL_PATH}/${DOMAIN}/${REPOSITORY}:${WORKDIR}
+    #  - ${AWS_CREDENTIALS}:/home/glue_user/.aws
     working_dir: ${WORKDIR}
     stdin_open: true
     tty: true
+    restart: unless-stopped
     # Mantener el contenedor vivo para desarrollo
-    command: python -m etl.app
-
-  jupyter:
-    container_name: glue_jupyter
-    image: amazon/aws-glue-libs:glue_libs_4.0.0_image_01
-    command: /home/glue_user/jupyter/jupyter_start.sh && \
-             chown -R 10000:10000 /home/glue_user/workspace/jupyter_workspace && \
-             tail -f /dev/null
-    environment:
-      - DISABLE_SSL=true
-      - AWS_PROFILE=glue4
-      - DATALAKE_FORMATS=hudi
-      - PYTHONPATH=$PYTHONPATH:/home/glue_user/workspace/extra_python_path/
-    ports:
-      - '4040:4040'     # Spark web UI
-      - '4041:4041'     # Spark web UI
-      - '18080:18080'   # Spark History server
-      - '18081:18081'   # Spark History server
-      - '8998:8998'     # Jupyter web server
-      - '8888:8888'     # Jupyter web server
-    restart: always
-    volumes:
-      - ./.aws:/home/glue_user/.aws
-      - ./glue_jupyter_workspace:/home/glue_user/workspace/jupyter_workspace/
-      - ./extra_python_path:/home/glue_user/workspace/extra_python_path/
-    stdin_open: true
-    tty: true
